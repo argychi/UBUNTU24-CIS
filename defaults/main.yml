@@ -9,13 +9,13 @@
 # These variables govern whether the tasks of a particular section are to be executed when running the role.
 # E.g: If you want to execute the tasks of Section 1 you should set the "_section1" variable
 # to "true". If you do not want the tasks from that section to get executed you simply set the variable to "false".
-ubtu24cis_section1: true
-ubtu24cis_section2: true
-ubtu24cis_section3: true
-ubtu24cis_section4: true
-ubtu24cis_section5: true
-ubtu24cis_section6: true
-ubtu24cis_section7: true
+ubtu24cis_section1: true # Section 1 has a lot of initial setup tasks that are generally not disruptive, so it is set to true by default
+ubtu24cis_section2: false # Section 2 has a lot of service-related tasks that can cause disruption if enabled, so it is set to false by default
+ubtu24cis_section3: true  # Section 3 has a lot of network-related tasks that can cause disruption if enabled, so it is set to true by default as many of the tasks are not disruptive but some are, so users can choose to disable if they want to avoid any risk of disruption
+ubtu24cis_section4: false # Section 4 has a lot of firewall-related tasks that can cause disruption if enabled, so it is set to false by default
+ubtu24cis_section5: true # Section 5 has a lot of access control related tasks that can cause disruption if enabled, so it is set to true by default as many of the tasks are not disruptive but some are, so users can choose to disable if they want to avoid any risk of disruption
+ubtu24cis_section6: true # Section 6 has a lot of logging and auditing related tasks , so it is set to true 
+ubtu24cis_section7: false # Section 7 has a lot of system maintenance related tasks , so it is set to true
 
 ## Reboot system before audit
 # System will reboot if false, can give better audit results
@@ -218,8 +218,8 @@ ubtu24cis_rule_1_3_1_2: true
 ubtu24cis_rule_1_3_1_3: true
 ubtu24cis_rule_1_3_1_4: true
 # 1.4 Configure Bootloader
-ubtu24cis_rule_1_4_1: true
-ubtu24cis_rule_1_4_2: true
+ubtu24cis_rule_1_4_1: false  # This is set to false by default as it can cause disruption if the system is rebooted and the bootloader password is not set up correctly, so it is recommended to set this to true only if you have the necessary access and permissions to recover the system in case of any issues with the bootloader configuration.
+ubtu24cis_rule_1_4_2: false  # This is set to false by default as it can cause disruption if the system is rebooted and the bootloader password is not set up correctly, so it is recommended to set this to true only if you have the necessary access and permissions to recover the system in case of any issues with the bootloader configuration.
 # 1.5 Configure additional Process Hardening
 ubtu24cis_rule_1_5_1: true
 ubtu24cis_rule_1_5_2: true
@@ -394,7 +394,7 @@ ubtu24cis_rule_5_2_1: true
 ubtu24cis_rule_5_2_2: true
 ubtu24cis_rule_5_2_3: true
 ubtu24cis_rule_5_2_4: true
-ubtu24cis_rule_5_2_5: true
+ubtu24cis_rule_5_2_5: false
 ubtu24cis_rule_5_2_6: true
 ubtu24cis_rule_5_2_7: true
 # 5.3.1 Configure PAM software packages
@@ -441,7 +441,7 @@ ubtu24cis_rule_5_4_1_6: true
 ubtu24cis_rule_5_4_2_1: true
 ubtu24cis_rule_5_4_2_2: true
 ubtu24cis_rule_5_4_2_3: true
-ubtu24cis_rule_5_4_2_4: true
+ubtu24cis_rule_5_4_2_4: false
 ubtu24cis_rule_5_4_2_5: true
 ubtu24cis_rule_5_4_2_6: true
 ubtu24cis_rule_5_4_2_7: true
@@ -522,9 +522,9 @@ ubtu24cis_rule_6_2_4_8: true
 ubtu24cis_rule_6_2_4_9: true
 ubtu24cis_rule_6_2_4_10: true
 # 6.3 Configure Filesystem Integrity Checking
-ubtu24cis_rule_6_3_1: true
-ubtu24cis_rule_6_3_2: true
-ubtu24cis_rule_6_3_3: true
+ubtu24cis_rule_6_3_1: false
+ubtu24cis_rule_6_3_2: false
+ubtu24cis_rule_6_3_3: false
 
 ## Section 7 Fixes
 # Section 7 is System Maintenance (System File Permissions and User and Group Settings)
@@ -829,6 +829,7 @@ ubtu24cis_ftp_client: false
 ## Control 2.3.1.1 - Ensure a single time synchronization daemon is in use
 # This variable chooses the tool used for time synchronization
 # The two options are `chrony`and `systemd-timesyncd`.
+# modified not to be changed 
 ubtu24cis_time_sync_tool: "chrony"
 
 ## Controls 2.3.x - Configure time pools & servers for chrony and timesyncd
@@ -915,11 +916,11 @@ ubtu24cis_ufw_allow_out_ports:
 # The option `nftables` is also possible, but will only result in a message,
 # that `nftables` has been chosen; all settings have to be carried out manually.
 # Any other value, e.g. `none` will skip all firewall-related controls.
-ubtu24cis_firewall_package: "ufw"
+ubtu24cis_firewall_package: "none"
 
 # This variable is used in a preliminary task that forces the UFW firewall to use /etc/sysctl.conf
 # settings. If set to "true" the task will get done in the prelim section of the role.
-ubtu24cis_ufw_use_sysctl: true
+ubtu24cis_ufw_use_sysctl: false
 
 ##
 ## Section 5 Control Variables
@@ -1020,8 +1021,8 @@ ubtu24cis_sudo_logfile: "/var/log/sudo.log"
 # The following variable specifies a list of users that should not be required to provide a password
 # for escalation. Feel free to edit it according to your needs.
 ubtu24cis_sudoers_exclude_nopasswd_list:
-  - ec2-user
-  - vagrant
+  - argy
+  - ubuntu
 
 ##  Control 5.2.6 - Ensure sudo authentication timeout is configured correctly
 # This variable sets the duration (in minutes) during which a user's authentication credentials
@@ -1227,7 +1228,7 @@ ubtu24cis_pass_max_days: 365
 ## Control 5.4.1.2 - Ensure minimum password days is configured
 # This variable specifies the minimum number of days allowed between changing passwords.
 # CIS requires a value of at least 1.
-ubtu24cis_pass_min_days: 1
+ubtu24cis_pass_min_days: 0
 
 ## Control 5.4.1.3 - Ensure password expiration warning days is configured
 # This variable governs, how many days before a password expires, the user will be warned.
@@ -1549,7 +1550,7 @@ ubtu24cis_aide_cron_weekday: '*'
 # The following variable is a toggle for enabling/disabling the automated
 # removal of world-writable permissions from all files.
 # Possible values are `true` and `false`.
-ubtu24cis_no_world_write_adjust: true
+ubtu24cis_no_world_write_adjust: false
 
 ## Control 7.1.12 - Ensure no files or directories without an owner and a group exist
 # This variable holds the part of the command that helps detect which files and
@@ -1586,4 +1587,4 @@ ubtu24cis_suid_sgid_adjust: false
 # This variable is a toggle foe enabling/disabling the automated modification of
 # permissions on dot files.
 # Possible values are `true` and `false`.
-ubtu24cis_dotperm_ansiblemanaged: true
+ubtu24cis_dotperm_ansiblemanaged: false
